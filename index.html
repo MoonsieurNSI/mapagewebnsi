@@ -25,6 +25,7 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        position: relative;
       }
 
       #chat-container {
@@ -91,6 +92,10 @@
         padding: 6px 10px;
         background-color: #eee;
         align-items: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       #message-input {
@@ -116,6 +121,7 @@
         border-radius: 20px;
         cursor: pointer;
         transition: background-color 0.2s;
+        margin-left: 10px;
       }
 
       #send-button.sending {
@@ -157,15 +163,9 @@
       }
 
       @keyframes typing {
-        0% {
-          opacity: 0.3;
-        }
-        50% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0.3;
-        }
+        0% { opacity: 0.3; }
+        50% { opacity: 1; }
+        100% { opacity: 0.3; }
       }
     </style>
   </head>
@@ -174,27 +174,18 @@
     <div id="smartphone-frame">
       <div id="chat-container"></div>
       <div class="input-container">
-        <textarea
-          id="message-input"
-          placeholder="Tapez votre message..."
-        ></textarea>
+        <textarea id="message-input" placeholder="Tapez votre message..."></textarea>
         <button id="send-button">Envoyer</button>
       </div>
     </div>
 
     <script>
       const script = [
-        {
-          sender: "Cyril",
-          text: "Aujourd’hui, tu cherches tes mots MDR…Pourquoi ?",
-        },
+        { sender: "Cyril", text: "Aujourd’hui, tu cherches tes mots MDR…Pourquoi ?" },
         { sender: "Texto", text: "MDR, c'est juste la connexion pourrie !" },
         { sender: "Cyril", text: "MDR ! Moi 5G ! Tu fé koi ?" },
         { sender: "Texto", text: "me suis rapproché de la boxe. Mieux !" },
-        {
-          sender: "Cyril",
-          text: "MDR ! Vas-y c'est relou par tel, je passe te voir.",
-        },
+        { sender: "Cyril", text: "MDR ! Vas-y c'est relou par tel, je passe te voir." },
         { sender: "Texto", text: "Non !" },
         { sender: "Cyril", text: "PQ non ?" },
         { sender: "Texto", text: "Parce que c'est mieux comme ça. J'préfère." },
@@ -204,24 +195,15 @@
         { sender: "Cyril", text: "Trop chelou ce soir..." },
         { sender: "Texto", text: "ben même pas... J'suis moi quoi !" },
         { sender: "Cyril", text: "Genre toi ouais mais chelou" },
-        {
-          sender: "Cyril",
-          text: "Tu caches quelque chose…t'agis en screed. En vrai t'as un crusch ?",
-        },
+        { sender: "Cyril", text: "Tu caches quelque chose…t'agis en screed. En vrai t'as un crusch ?" },
         { sender: "Texto", text: "Génance...Et si c’était oui ?" },
         { sender: "Cyril", text: "Nan ! Cé ki ?" },
         { sender: "Texto", text: "C'est toi." },
         { sender: "Cyril", text: "MDR !!! Genre vraiment ?" },
-        {
-          sender: "Texto",
-          text: "genre oui vraiment ! J'm'en fous te balance tout...\nJe t’aime. J’étouffe. Je t’aime, je deviens dingue. Tu tournes en boucle dans ma tête.\nTout le temps ! Je me rappelle de tout. Chaque détail, l'autre jour, t’as changé de\ncoiffure. Ouais, j' suis tellement fixé sur toi, je retiens ces trucs-là…T'es mon soleil.\nEt moi, même quand t’es plus là, j’te vois encore.\nTu dis rien ?\nToujours là ?",
-        },
+        { sender: "Texto", text: "genre oui vraiment ! J'm'en fous te balance tout...\nJe t’aime. J’étouffe. Je t’aime, je deviens dingue. Tu tournes en boucle dans ma tête.\nTout le temps ! Je me rappelle de tout. Chaque détail, l'autre jour, t’as changé de\ncoiffure. Ouais, j' suis tellement fixé sur toi, je retiens ces trucs-là…T'es mon soleil.\nEt moi, même quand t’es plus là, j’te vois encore.\nTu dis rien ?\nToujours là ?" },
         { sender: "Texto", text: "GENANCE ++\nDis quelque chose stp !" },
         { sender: "Cyril", text: "Emoticone « in love »." },
-        {
-          sender: "Cyril",
-          text: "En vrai moi aussi j'suis grave dedans. In love.",
-        },
+        { sender: "Cyril", text: "En vrai moi aussi j'suis grave dedans. In love." }
       ];
 
       const chatContainer = document.getElementById("chat-container");
@@ -230,14 +212,14 @@
 
       let scriptIndex = 0;
 
-      function addMessage(text, type, name) {
+      function addMessage(text, type, name = null) {
         const container = document.createElement("div");
         container.className = type === "sent" ? "align-right" : "align-left";
 
         const msgBox = document.createElement("div");
         msgBox.className = `message ${type}`;
 
-        if (type === "received") {
+        if (type === "received" && name) {
           const nameSpan = document.createElement("span");
           nameSpan.className = "message-name";
           nameSpan.textContent = name;
@@ -257,8 +239,7 @@
       function showTypingIndicator() {
         const typing = document.createElement("div");
         typing.className = "typing-indicator align-left";
-        typing.innerHTML =
-          '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+        typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
         chatContainer.appendChild(typing);
         chatContainer.scrollTop = chatContainer.scrollHeight;
         return typing;
@@ -320,7 +301,6 @@
         }
       });
 
-      // Lancement automatique dès le chargement
       window.onload = () => {
         typeAndSendNext();
       };
