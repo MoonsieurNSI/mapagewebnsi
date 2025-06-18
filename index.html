@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Language" content="fr">
+    <meta http-equiv="Content-Language" content="fr" />
     <title>Simulateur de SMS</title>
     <style>
+      /* Le CSS reste le même que la version précédente, il n'y a pas de changements ici */
       body {
         font-family: sans-serif;
         background-color: #f0f0f0;
@@ -16,7 +17,6 @@
         align-items: center;
         min-height: 100vh;
       }
-
       #smartphone-frame {
         width: 320px;
         height: 568px;
@@ -27,7 +27,6 @@
         display: flex;
         flex-direction: column;
       }
-
       #chat-container {
         flex-grow: 1;
         padding: 10px;
@@ -36,147 +35,127 @@
         flex-direction: column;
         justify-content: flex-start;
       }
-
       .message-container {
         display: flex;
         margin-bottom: 10px;
       }
-
       .message {
-        padding: 5px 10px 10px;
+        padding: 5px 15px 20px;
         border-radius: 20px;
         word-wrap: break-word;
         max-width: 70%;
         position: relative;
       }
-
       .message.sent {
-        background-color: #dcf8c6; /* Vert clair */
+        background-color: #dcf8c6;
         align-self: flex-end;
-        margin-left: 50px; /* Espace pour la photo de profil */
       }
-
       .message.received {
-        background-color: #e1f5fe; /* Bleu clair */
+        background-color: #e1f5fe;
         align-self: flex-start;
       }
-
       .message-name {
-        font-size: 0.7em;
-        color: #007bff; /* Couleur bleue pour les noms */
-        margin-bottom: 3px;
+        font-size: 0.8em;
+        color: #007bff;
+        margin-bottom: 4px;
         font-weight: bold;
         display: block;
       }
-
       .message-text {
-  padding-top: 3px;
-  display: inline-block;
-  white-space: pre-wrap;
-  max-width: 95%;
-  overflow-wrap: break-word; /* Pour casser les mots trop longs */
-  word-break: break-word; /* Casse au niveau du mot si besoin */
-  hyphens: auto; /* Active la césure naturelle selon la langue */
-}
-
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
       .message-time {
         position: absolute;
         bottom: 5px;
-        right: 10px;
-        font-size: 0.6em;
+        right: 12px;
+        font-size: 0.7em;
         color: #999;
       }
-
       .input-container {
-  display: flex;
-  padding: 6px 10px;
-  background-color: #eee;
-  align-items: center;
-}
-
-
+        display: flex;
+        padding: 6px 10px;
+        background-color: #eee;
+        align-items: center;
+      }
       #message-input {
-      
-  flex-grow: 1;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  resize: none;
-  font-family: inherit;
-  font-size: 0.95em;
-  line-height: 1.4em;
-  min-height: 32px;
-  max-height: 120px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
+        flex-grow: 1;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        resize: none;
+        font-family: inherit;
+        font-size: 1em;
+        line-height: 1.4em;
+        min-height: 38px;
+        max-height: 120px;
+        overflow-y: auto;
+        box-sizing: border-box;
+      }
       #send-button {
         padding: 10px 20px;
+        margin-left: 8px;
         background-color: #4caf50;
         color: white;
         border: none;
         border-radius: 20px;
         cursor: pointer;
+        transition: all 0.2s ease-in-out;
       }
-
-      #send-button:hover {
-        background-color: #3e8e41;
+      #send-button.active {
+        transform: scale(1.1);
+        background-color: #5cb85c;
       }
-
       .align-right {
         display: flex;
         justify-content: flex-end;
       }
-
       .align-left {
         display: flex;
         justify-content: flex-start;
-        align-items: center; /* Centre verticalement */
+        align-items: flex-end;
       }
-
       .typing-indicator {
         display: flex;
-        justify-content: center;
-        align-items: center;
+        background-color: #e1f5fe;
+        padding: 10px 15px;
+        border-radius: 20px;
         margin-bottom: 10px;
       }
-
       .typing-dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #bbb;
+        background-color: #888;
         margin: 0 3px;
-        animation: typing 1.2s infinite;
+        animation: typing 1.4s infinite;
       }
-
       .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
         animation-delay: 0.4s;
       }
-
-      .typing-dot:nth-child(3) {
-        animation-delay: 0.8s;
-      }
-
       @keyframes typing {
         0% {
-          opacity: 0.3;
+          transform: translateY(0);
         }
-        50% {
-          opacity: 1;
+        25% {
+          transform: translateY(-5px);
         }
+        50%,
         100% {
-          opacity: 0.3;
+          transform: translateY(0);
         }
       }
-
       .profile-picture {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
         border-radius: 50%;
-        margin-right: 10px;
-        object-fit: cover; /* Pour que l'image remplisse le cercle sans se déformer */
+        margin-right: 8px;
+        object-fit: cover;
+        align-self: flex-end;
       }
     </style>
   </head>
@@ -184,145 +163,193 @@
     <h1>Simulateur de SMS</h1>
 
     <div id="smartphone-frame">
-      <div id="chat-container">
-        <!-- Les messages seront ajoutés ici -->
-      </div>
-
+      <div id="chat-container"></div>
       <div class="input-container">
+        <!-- MODIFICATION 1 : Passage de rows="1" à rows="2" -->
         <textarea
-        id="message-input"
-        rows="1"
-        placeholder="Tapez votre message..."
-      ></textarea>
-      
+          id="message-input"
+          rows="2"
+          placeholder="Tapez votre message..."
+        ></textarea>
         <button id="send-button">Envoyer</button>
       </div>
     </div>
 
     <script>
-      let recentMessages = []; // Horodatage des messages récents
+      const interlocutorName = "Cyril";
+      const interlocutorProfilePicture = "./AdaLovelace.jpg";
+      const actorName = "Texto fille 2025";
+
+      const dialogue = [
+        {
+          speaker: interlocutorName,
+          text: "Aujourd’hui, tu cherches tes mots MDR…Pourquoi ?",
+        },
+        { speaker: actorName, text: "MDR, c'est juste la connexion pourrie !" },
+        { speaker: interlocutorName, text: "MDR ! Moi 5G ! Tu fé koi ?" },
+        { speaker: actorName, text: "me suis rapproché de la boxe. Mieux !" },
+        {
+          speaker: interlocutorName,
+          text: "MDR ! Vas-y c'est relou par tel, je passe te voir.",
+        },
+        { speaker: actorName, text: "Non !" },
+        { speaker: interlocutorName, text: "PQ non ?" },
+        {
+          speaker: actorName,
+          text: "Parce que c'est mieux comme ça. J'préfère.",
+        },
+        { speaker: interlocutorName, text: "???" },
+        { speaker: interlocutorName, text: "?????????" },
+        { speaker: actorName, text: "Tête qui tourne...fatigué jté dis..." },
+        { speaker: interlocutorName, text: "Trop chelou ce soir..." },
+        { speaker: actorName, text: "ben même pas... J'suis moi quoi !" },
+        { speaker: interlocutorName, text: "Genre toi ouais mais chelou" },
+        {
+          speaker: interlocutorName,
+          text: "Tu caches quelque chose…t'agis en screed. En vrai t'as un crusch ?",
+        },
+        { speaker: actorName, text: "Génance...Et si c’était oui ?" },
+        { speaker: interlocutorName, text: "Nan ! Cé ki ?" },
+        { speaker: actorName, text: "C'est toi." },
+        { speaker: interlocutorName, text: "MDR !!! Genre vraiment ?" },
+        {
+          speaker: actorName,
+          text: "genre oui vraiment ! J'm'en fous te balance tout...\nJe t’aime. J’étouffe. Je t’aime, je deviens dingue. Tu tournes en boucle dans ma tête.\nTout le temps ! Je me rappelle de tout. Chaque détail, l'autre jour, t’as changé de\ncoiffure. Ouais, j' suis tellement fixé sur toi, je retiens ces trucs-là…T'es mon soleil.\nEt moi, même quand t’es plus là, j’te vois encore.",
+          delayAfter: 2000,
+        },
+        { speaker: actorName, text: "Tu dis rien ?" },
+        { speaker: actorName, text: "Toujours là ?" },
+        { speaker: actorName, text: "GENANCE ++" },
+        { speaker: actorName, text: "Dis quelque chose stp !" },
+        {
+          speaker: interlocutorName,
+          text: "🥰\nEn vrai moi aussi j'suis grave dedans. In love.",
+        },
+      ];
+
       const chatContainer = document.getElementById("chat-container");
       const messageInput = document.getElementById("message-input");
       const sendButton = document.getElementById("send-button");
-      let loremIpsum =
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."; // Déplacer la déclaration ici
-      const nomUtilisateurEnvoye = "Actrice Principale";
-      const nomUtilisateurRecu = "Interlocuteur";
-      const maxWordLength = 26; // Longueur maximale d'un mot avant d'insérer un espace
-      const typingIndicatorTimeout = 2000; // Délai avant d'afficher l'indicateur (en ms)
-      const interlocutorProfilePicture = "./AdaLovelace.jpg"; // URL de la photo de profil
-      const maxBubbleWidth = 200; // Largeur maximale de la bulle en pixels
 
-      sendButton.addEventListener("click", sendMessage);
+      let dialogueIndex = 0;
+      let isTyping = false;
+
+      function typeText(text, onComplete) {
+        let index = 0;
+        isTyping = true;
+        messageInput.value = "";
+
+        const typingInterval = setInterval(() => {
+          if (index < text.length) {
+            messageInput.value += text[index];
+            messageInput.scrollTop = messageInput.scrollHeight;
+            index++;
+          } else {
+            clearInterval(typingInterval);
+            isTyping = false;
+            if (onComplete) onComplete();
+          }
+        }, 50);
+      }
+
+      sendButton.addEventListener("click", () => {
+        if (!isTyping) sendMessage();
+      });
 
       messageInput.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    if (event.shiftKey) {
-      // Laisse faire le saut de ligne
-      return;
-    } else {
-      event.preventDefault();
-      sendMessage();
-    }
-  }
-});
-
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          if (!isTyping) {
+            sendMessage();
+          }
+        }
+      });
 
       function sendMessage() {
-  let messageText = messageInput.value.trim();
-  if (messageText === "") return;
+        let messageText = messageInput.value.trim();
+        if (messageText === "") return;
 
-  const now = Date.now();
-  recentMessages.push(now);
+        sendButton.classList.add("active");
+        setTimeout(() => sendButton.classList.remove("active"), 200);
 
-  // Garder uniquement les messages des 10 dernières secondes
-  recentMessages = recentMessages.filter(
-    (timestamp) => now - timestamp <= 10000
-  );
+        const sentMessageObject = dialogue[dialogueIndex];
+        addMessage(messageText, "sent", null);
+        messageInput.value = "";
 
-  messageText = breakLongWords(messageText, maxWordLength);
-  addMessage(messageText, "sent", nomUtilisateurEnvoye);
-  messageInput.value = "";
-  messageInput.focus();
+        dialogueIndex++;
 
-  // Vérifier s'il faut répondre maintenant
-  handleSmartReply();
-}
+        if (sentMessageObject && sentMessageObject.delayAfter) {
+          setTimeout(handleNextMessage, sentMessageObject.delayAfter);
+        } else {
+          handleNextMessage();
+        }
+      }
 
-let replyTimeout = null;
+      function handleNextMessage() {
+        if (dialogueIndex >= dialogue.length) return;
 
-function handleSmartReply() {
-  if (replyTimeout) clearTimeout(replyTimeout);
+        const nextMessage = dialogue[dialogueIndex];
 
-  replyTimeout = setTimeout(() => {
-    const now = Date.now();
-    const relevantMessages = recentMessages.filter(
-      (timestamp, i, arr) =>
-        now - timestamp < 4000 && // délai max 4 secondes
-        (i === 0 || timestamp - arr[i - 1] < 1000) // tous espacés de moins d’1s
-    );
+        if (nextMessage.speaker === interlocutorName) {
+          const typingIndicator = showTypingIndicator();
+          setTimeout(() => {
+            removeTypingIndicator(typingIndicator);
+            addMessage(
+              nextMessage.text,
+              "received",
+              interlocutorName,
+              interlocutorProfilePicture
+            );
 
-    if (relevantMessages.length > 0) {
-      const typingIndicator = showTypingIndicator();
-      setTimeout(() => {
-        removeTypingIndicator(typingIndicator);
-        let processedText = breakLongWords(loremIpsum, maxWordLength);
-        addMessage(
-          processedText,
-          "received",
-          nomUtilisateurRecu,
-          interlocutorProfilePicture
-        );
-        recentMessages = []; // Réinitialiser après la réponse
-        replyTimeout = null;
-      }, getRandomDelay(1000, 2500));
-    }
-  }, 1000); // Attendre 1s d'inactivité avant de déclencher la réponse
-}
-
+            dialogueIndex++;
+            handleNextMessage();
+          }, getRandomDelay(1500, 2500));
+        } else if (nextMessage.speaker === actorName) {
+          // MODIFICATION 2 : Ajout du focus après la frappe
+          typeText(nextMessage.text, () => {
+            messageInput.focus();
+          });
+        }
+      }
 
       function addMessage(text, type, username, profilePicture = null) {
         const messageContainer = document.createElement("div");
-        messageContainer.classList.add("message-container");
+        messageContainer.classList.add(
+          type === "sent" ? "align-right" : "align-left"
+        );
 
         const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message");
-        messageDiv.classList.add(type);
+        messageDiv.classList.add("message", type);
 
-        const messageName = document.createElement("span"); // Span pour le nom
-        messageName.classList.add("message-name");
-        messageName.textContent = username;
+        if (username) {
+          const messageName = document.createElement("span");
+          messageName.classList.add("message-name");
+          messageName.textContent = username;
+          messageDiv.appendChild(messageName);
+        }
 
-        const messageTextElement = document.createElement("span"); // span pour le texte
+        const messageTextElement = document.createElement("span");
         messageTextElement.classList.add("message-text");
-        messageTextElement.innerHTML = text; // Utiliser innerHTML pour interpréter les ­
+        messageTextElement.textContent = text;
+        messageDiv.appendChild(messageTextElement);
 
-        const messageTime = document.createElement("div");
+        const messageTime = document.createElement("span");
         messageTime.classList.add("message-time");
         messageTime.textContent = getCurrentTime();
-
-        messageDiv.appendChild(messageName); // Ajout du nom à la bulle
-        messageDiv.appendChild(messageTextElement); // Ajout du text
-        messageDiv.appendChild(messageTime); // Ajout de l'heure à la bulle
+        messageDiv.appendChild(messageTime);
 
         if (profilePicture && type === "received") {
           const profilePictureImg = document.createElement("img");
           profilePictureImg.classList.add("profile-picture");
-          profilePictureImg.src = profilePicture;
-          messageContainer.appendChild(profilePictureImg);
+          profilePictureImg.src = interlocutorProfilePicture;
+          messageContainer.insertBefore(
+            profilePictureImg,
+            messageContainer.firstChild
+          );
         }
 
-        messageContainer.appendChild(messageDiv); // Ajout de la bulle au conteneur
-
-        const alignmentDiv = document.createElement("div");
-        alignmentDiv.classList.add(
-          type === "sent" ? "align-right" : "align-left"
-        );
-        alignmentDiv.appendChild(messageContainer);
-
-        chatContainer.appendChild(alignmentDiv);
-
-        // Faire défiler vers le bas pour voir le dernier message
+        messageContainer.appendChild(messageDiv);
+        chatContainer.appendChild(messageContainer);
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
 
@@ -333,61 +360,37 @@ function handleSmartReply() {
         return `${hours}:${minutes}`;
       }
 
-      function breakLongWords(text, maxLength) {
-        const words = text.split(" ");
-        const brokenWords = words.map((word) => {
-          if (word.length > maxLength) {
-            let brokenWord = "";
-            for (let i = 0; i < word.length; i += maxLength) {
-              brokenWord += word.substring(i, i + maxLength) + " ";
-            }
-            return brokenWord;
-          } else {
-            return word;
-          }
-        });
-        return brokenWords.join(" ");
-      }
-
       function getRandomDelay(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
 
       function showTypingIndicator() {
+        const indicatorContainer = document.createElement("div");
+        indicatorContainer.classList.add("align-left");
+        indicatorContainer.id = "typing-indicator-wrapper";
+
+        const profilePictureImg = document.createElement("img");
+        profilePictureImg.classList.add("profile-picture");
+        profilePictureImg.src = interlocutorProfilePicture;
+        indicatorContainer.appendChild(profilePictureImg);
+
         const typingIndicator = document.createElement("div");
         typingIndicator.classList.add("typing-indicator");
-        typingIndicator.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-        const alignmentDiv = document.createElement("div");
-        alignmentDiv.classList.add("align-left");
-        alignmentDiv.appendChild(typingIndicator);
-        chatContainer.appendChild(alignmentDiv);
+        typingIndicator.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
+        indicatorContainer.appendChild(typingIndicator);
+
+        chatContainer.appendChild(indicatorContainer);
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        return typingIndicator;
+        return indicatorContainer;
       }
 
       function removeTypingIndicator(indicator) {
         if (indicator && indicator.parentNode) {
-          indicator.parentNode.remove();
+          indicator.remove();
         }
       }
 
-       function insertSoftHyphens(text, interval) {
-            let result = "";
-            for (let i = 0; i < text.length; i++) {
-                result += text[i];
-                if ((i + 1) % interval === 0 && i !== text.length - 1) {
-                    result += "­";
-                }
-            }
-            return result;
-        }
-    </script>
-  </body>
-</html>
+      handleNextMessage();
     </script>
   </body>
 </html>
