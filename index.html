@@ -4,9 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Language" content="fr" />
-    <title>Simulateur de SMS</title>
+    <title>Simulateur de SMS (Mode Spectacle)</title>
     <style>
-      /* Le CSS reste le même que la version précédente, il n'y a pas de changements ici */
       body {
         font-family: sans-serif;
         background-color: #f0f0f0;
@@ -16,6 +15,11 @@
         flex-direction: column;
         align-items: center;
         min-height: 100vh;
+      }
+      h1 {
+        font-size: 1.2em;
+        color: #555;
+        font-weight: normal;
       }
       #smartphone-frame {
         width: 320px;
@@ -43,7 +47,7 @@
         padding: 5px 15px 20px;
         border-radius: 20px;
         word-wrap: break-word;
-        max-width: 70%;
+        max-width: 80%; /* Un peu plus large car plus de photo */
         position: relative;
       }
       .message.sent {
@@ -73,40 +77,6 @@
         font-size: 0.7em;
         color: #999;
       }
-      .input-container {
-        display: flex;
-        padding: 6px 10px;
-        background-color: #eee;
-        align-items: center;
-      }
-      #message-input {
-        flex-grow: 1;
-        padding: 8px 12px;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        resize: none;
-        font-family: inherit;
-        font-size: 1em;
-        line-height: 1.4em;
-        min-height: 38px;
-        max-height: 120px;
-        overflow-y: auto;
-        box-sizing: border-box;
-      }
-      #send-button {
-        padding: 10px 20px;
-        margin-left: 8px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-      }
-      #send-button.active {
-        transform: scale(1.1);
-        background-color: #5cb85c;
-      }
       .align-right {
         display: flex;
         justify-content: flex-end;
@@ -114,7 +84,6 @@
       .align-left {
         display: flex;
         justify-content: flex-start;
-        align-items: flex-end;
       }
       .typing-indicator {
         display: flex;
@@ -149,35 +118,18 @@
           transform: translateY(0);
         }
       }
-      .profile-picture {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        margin-right: 8px;
-        object-fit: cover;
-        align-self: flex-end;
-      }
     </style>
   </head>
   <body>
-    <h1>Simulateur de SMS</h1>
+    <h1 id="status-display">Démarrage...</h1>
 
     <div id="smartphone-frame">
       <div id="chat-container"></div>
-      <div class="input-container">
-        <!-- MODIFICATION 1 : Passage de rows="1" à rows="2" -->
-        <textarea
-          id="message-input"
-          rows="2"
-          placeholder="Tapez votre message..."
-        ></textarea>
-        <button id="send-button">Envoyer</button>
-      </div>
+      <!-- Le formulaire d'envoi a été supprimé -->
     </div>
 
     <script>
       const interlocutorName = "Cyril";
-      const interlocutorProfilePicture = "./img/AdaLovelace.jpg";
       const actorName = "Texto fille 2025";
 
       const dialogue = [
@@ -215,9 +167,8 @@
         {
           speaker: actorName,
           text: "genre oui vraiment ! J'm'en fous te balance tout...\nJe t’aime. J’étouffe. Je t’aime, je deviens dingue. Tu tournes en boucle dans ma tête.\nTout le temps ! Je me rappelle de tout. Chaque détail, l'autre jour, t’as changé de\ncoiffure. Ouais, j' suis tellement fixé sur toi, je retiens ces trucs-là…T'es mon soleil.\nEt moi, même quand t’es plus là, j’te vois encore.",
-          delayAfter: 2000,
         },
-        { speaker: actorName, text: "Tu dis rien ?" },
+        { speaker: actorName, text: "Tu dis rien ?", delayAfter: 2000 },
         { speaker: actorName, text: "Toujours là ?" },
         { speaker: actorName, text: "GENANCE ++" },
         { speaker: actorName, text: "Dis quelque chose stp !" },
@@ -228,91 +179,83 @@
       ];
 
       const chatContainer = document.getElementById("chat-container");
-      const messageInput = document.getElementById("message-input");
-      const sendButton = document.getElementById("send-button");
+      const statusDisplay = document.getElementById("status-display"); // Pour afficher les instructions
 
       let dialogueIndex = 0;
-      let isTyping = false;
+      let isWaiting = false; // Pour empêcher les doubles pressions de touche
 
-      function typeText(text, onComplete) {
-        let index = 0;
-        isTyping = true;
-        messageInput.value = "";
+      // Écouteur de clavier global qui gère toute la logique
+      document.addEventListener("keydown", (event) => {
+        if (isWaiting || dialogueIndex >= dialogue.length) return; // Ignore si une action est déjà en cours
 
-        const typingInterval = setInterval(() => {
-          if (index < text.length) {
-            messageInput.value += text[index];
-            messageInput.scrollTop = messageInput.scrollHeight;
-            index++;
-          } else {
-            clearInterval(typingInterval);
-            isTyping = false;
-            if (onComplete) onComplete();
-          }
-        }, 50);
-      }
+        const currentMessage = dialogue[dialogueIndex];
 
-      sendButton.addEventListener("click", () => {
-        if (!isTyping) sendMessage();
-      });
-
-      messageInput.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" && !event.shiftKey) {
+        // Déclenche le message de Cyril avec la touche 'c'
+        if (
+          event.key.toLowerCase() === "c" &&
+          currentMessage.speaker === interlocutorName
+        ) {
+          triggerCyrilMessage();
+        }
+        // Déclenche le message de l'actrice avec la touche 'Entrée'
+        else if (
+          event.key === "Enter" &&
+          currentMessage.speaker === actorName
+        ) {
           event.preventDefault();
-          if (!isTyping) {
-            sendMessage();
-          }
+          triggerActorMessage();
         }
       });
 
-      function sendMessage() {
-        let messageText = messageInput.value.trim();
-        if (messageText === "") return;
-
-        sendButton.classList.add("active");
-        setTimeout(() => sendButton.classList.remove("active"), 200);
+      // Fonction pour déclencher le message de l'actrice
+      function triggerActorMessage() {
+        isWaiting = true;
+        const message = dialogue[dialogueIndex];
+        addMessage(message.text, "sent", null); // 'sent' type, pas de nom
 
         const sentMessageObject = dialogue[dialogueIndex];
-        addMessage(messageText, "sent", null);
-        messageInput.value = "";
-
         dialogueIndex++;
 
-        if (sentMessageObject && sentMessageObject.delayAfter) {
-          setTimeout(handleNextMessage, sentMessageObject.delayAfter);
+        if (sentMessageObject.delayAfter) {
+          setTimeout(prepareNextStep, sentMessageObject.delayAfter);
         } else {
-          handleNextMessage();
+          prepareNextStep();
         }
       }
 
-      function handleNextMessage() {
-        if (dialogueIndex >= dialogue.length) return;
+      // Fonction pour déclencher le message de Cyril
+      function triggerCyrilMessage() {
+        isWaiting = true;
+        const message = dialogue[dialogueIndex];
+        const typingIndicator = showTypingIndicator();
+
+        setTimeout(() => {
+          removeTypingIndicator(typingIndicator);
+          addMessage(message.text, "received", interlocutorName);
+
+          dialogueIndex++;
+          prepareNextStep();
+        }, getRandomDelay(1000, 2000));
+      }
+
+      // Fonction qui prépare l'étape suivante et met à jour les instructions
+      function prepareNextStep() {
+        isWaiting = false; // Prêt pour la prochaine action
+        if (dialogueIndex >= dialogue.length) {
+          statusDisplay.textContent = "Fin de la conversation.";
+          return;
+        }
 
         const nextMessage = dialogue[dialogueIndex];
 
         if (nextMessage.speaker === interlocutorName) {
-          const typingIndicator = showTypingIndicator();
-          setTimeout(() => {
-            removeTypingIndicator(typingIndicator);
-            addMessage(
-              nextMessage.text,
-              "received",
-              interlocutorName,
-              interlocutorProfilePicture
-            );
-
-            dialogueIndex++;
-            handleNextMessage();
-          }, getRandomDelay(1500, 2500));
+          statusDisplay.textContent = `Appuyez sur 'C' pour la réponse de ${interlocutorName}...`;
         } else if (nextMessage.speaker === actorName) {
-          // MODIFICATION 2 : Ajout du focus après la frappe
-          typeText(nextMessage.text, () => {
-            messageInput.focus();
-          });
+          statusDisplay.textContent = `Appuyez sur 'Entrée' pour la réponse de l'actrice...`;
         }
       }
 
-      function addMessage(text, type, username, profilePicture = null) {
+      function addMessage(text, type, username) {
         const messageContainer = document.createElement("div");
         messageContainer.classList.add(
           type === "sent" ? "align-right" : "align-left"
@@ -338,16 +281,6 @@
         messageTime.textContent = getCurrentTime();
         messageDiv.appendChild(messageTime);
 
-        if (profilePicture && type === "received") {
-          const profilePictureImg = document.createElement("img");
-          profilePictureImg.classList.add("profile-picture");
-          profilePictureImg.src = interlocutorProfilePicture;
-          messageContainer.insertBefore(
-            profilePictureImg,
-            messageContainer.firstChild
-          );
-        }
-
         messageContainer.appendChild(messageDiv);
         chatContainer.appendChild(messageContainer);
         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -369,11 +302,6 @@
         indicatorContainer.classList.add("align-left");
         indicatorContainer.id = "typing-indicator-wrapper";
 
-        const profilePictureImg = document.createElement("img");
-        profilePictureImg.classList.add("profile-picture");
-        profilePictureImg.src = interlocutorProfilePicture;
-        indicatorContainer.appendChild(profilePictureImg);
-
         const typingIndicator = document.createElement("div");
         typingIndicator.classList.add("typing-indicator");
         typingIndicator.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
@@ -390,7 +318,8 @@
         }
       }
 
-      handleNextMessage();
+      // Démarrer la conversation
+      prepareNextStep();
     </script>
   </body>
 </html>
